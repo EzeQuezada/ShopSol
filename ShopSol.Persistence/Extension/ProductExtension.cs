@@ -22,7 +22,7 @@ namespace ShopSol.Persistence.Extension
 
             };
         }
-        public static Products ConvertProductSaveModel(this ProductBaseModel productsave)
+        public static Products ConvertProductSaveModel(this Products productsave)
         {
             return new Products()
             {
@@ -30,6 +30,16 @@ namespace ShopSol.Persistence.Extension
                 creation_user = productsave.creation_user,
                 creation_date = productsave.creation_date,
                 unitprice = productsave.unitprice,
+            };
+        }
+        public static ProductModel ConvertProductUpdateModel(this Products productupdate)
+        {
+            return new ProductModel
+            {
+                productname = productupdate.productname,
+                unitprice = productupdate.unitprice,
+                discontinued = productupdate.discontinued,
+
             };
         }
     }

@@ -60,7 +60,7 @@ namespace ShopSol.Persistence.Repositories
 
         public void save(Products entity)
         {
-            Products saveEntity = products.ConvertProductSaveModel();
+            Products saveEntity = entity.ConvertProductSaveModel();
 
             context.Products.Add(saveEntity);
             context.SaveChanges();
@@ -68,7 +68,14 @@ namespace ShopSol.Persistence.Repositories
 
         public void Update(Products entity)
         {
-            throw new NotImplementedException();
+            Products productsToUpdate = context.Products.Find(entity.productid);
+
+            if (productsToUpdate != null)
+            {
+                productsToUpdate.ConvertProductUpdateModel();
+                context.Products.Update(productsToUpdate);
+                context.SaveChanges();
+            }
         }
     }
 }

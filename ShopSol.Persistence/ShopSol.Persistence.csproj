@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ShopSol.Common.Data\ShopSol.Common.Data.csproj" />
     <ProjectReference Include="..\ShopSol.Domain\ShopSol.Domain.csproj" />
   </ItemGroup>
 
