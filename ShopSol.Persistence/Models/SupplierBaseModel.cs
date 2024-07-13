@@ -4,6 +4,7 @@ namespace ShopSol.Persistence.Models
 {
     public class SupplierBaseModel : SupplierModel
     {
+        public int supplierid { get; set; }
         public string? CompanyName { get; set; }
         public string? ContactName { get; set; }
         public string? ContactTitle { get; set; }
