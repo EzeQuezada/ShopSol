@@ -8,8 +8,8 @@ using ShopSol.Persistence.Models;
 
 namespace ShopSol.Aplication.Interfaces
 {
-    public interface IProductService : IBaseService<ProductBaseDto, 
-                                ProductRemoveDto, ProductUpdateDto>
+    public interface IProductService : IBaseService<ProductSaveDto, ProductUpdateDto,
+                                ProductRemoveDto >
     {
     }
 }
