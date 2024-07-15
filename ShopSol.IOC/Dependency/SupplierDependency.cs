@@ -11,7 +11,7 @@ namespace ShopSol.IOC.Dependency
         public static void AddSupplierDependecy(this IServiceCollection service)
         {
             service.AddScoped<ISupplierRepository, SupplierRepository>();
-            service.AddScoped<IProductRepository, ProductRepository>();
+           
         }
     }
 }

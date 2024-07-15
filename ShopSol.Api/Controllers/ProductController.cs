@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ShopSol.Persistence.Context;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +9,10 @@ namespace ShopSol.Api.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
+        public ProductController()
+        {
+            
+        }
         // GET: api/<ProductController>
         [HttpGet]
         public IEnumerable<string> Get()

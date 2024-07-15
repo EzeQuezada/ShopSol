@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ShopSol.Domain\ShopSol.Domain.csproj" />
+    <ProjectReference Include="..\ShopSol.Persistence\ShopSol.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>

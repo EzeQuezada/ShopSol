@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ShopSol.Domain.Interfaces;
 using ShopSol.Persistence.Context;
 using ShopSol.Persistence.Repositories;
+using ShopSol.IOC.Dependency;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +12,8 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("ShopContext")));
 
 
 //Agregar las dependencias del modulo Producto
-builder.Services.AddScoped<IProductRepository,ProductRepository>();
-builder.Services.AddScoped<ISupplierRepository,SupplierRepository>();
-
+builder.Services.AddSupplierDependecy();
+builder.Services.AddProductDependency();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
