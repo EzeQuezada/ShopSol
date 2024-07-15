@@ -6,8 +6,8 @@ using ShopSol.Persistence.Models;
 
 namespace ShopSol.Aplication.Interfaces
 {
-    public interface ISupplierService : IBaseService<SupplierSaveDto,
-                                 SupplierRemoveDto,SupplierUpdateDto>
+    public interface ISupplierService : IBaseService<SupplierSaveDto, SupplierUpdateDto,
+                                 SupplierRemoveDto>
     {
      
     }
