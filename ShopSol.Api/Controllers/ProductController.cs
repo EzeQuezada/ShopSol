@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ShopSol.Aplication.Dto.Product;
+using ShopSol.Aplication.Interfaces;
 using ShopSol.Persistence.Context;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -9,28 +11,48 @@ namespace ShopSol.Api.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        public ProductController()
+        private readonly IProductService productService;
+
+        public ProductController(IProductService productService)
         {
-            
+            this.productService = productService;
         }
         // GET: api/<ProductController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            var result = this.productService.Get();
+
+            if (!result.Success)
+                return BadRequest(result);
+
+
+            return Ok(result);
         }
 
         // GET api/<ProductController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("GetProductById")]
+        public IActionResult Get(int id)
         {
-            return "value";
+            var result = this.productService.GetById(id);
+
+            if (!result.Success)
+                return BadRequest(result);
+
+            return Ok(result);
         }
 
         // POST api/<ProductController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] ProductSaveDto productSaveDto)
         {
+            var result = this.productService.Save(productSaveDto);
+
+            if (!result.Success)
+                return BadRequest(result);
+
+
+            return Ok(result);
         }
 
         // PUT api/<ProductController>/5

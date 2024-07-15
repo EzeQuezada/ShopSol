@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using ShopMonolitica.Web.Data.Entities;
 using ShopSol.Aplication.Core;
 using ShopSol.Aplication.Dto.Supplier;
+using ShopSol.Aplication.Extension;
 using ShopSol.Aplication.Interfaces;
 using ShopSol.Domain.Interfaces;
 using ShopSol.Persistence.Exceptions;
@@ -102,12 +103,58 @@ namespace ShopSol.Aplication.Service
 
         public ServiceResult Save(SupplierSaveDto model)
         {
-            throw new NotImplementedException();
+            ServiceResult result = new ServiceResult();
+
+            try
+            {
+
+                if (!model.IsValidSupplier().Success)
+                    return result;
+
+                Suppliers suppliers = model.ConvertSupplierSaveEntitieModel();
+
+                this.supplierRepository.save(suppliers);
+
+                result.Message = "Suplidor guardado correctamente.";
+
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Error guardando el suplidor";
+                this.logger.LogError($"{result.Message}", ex.ToString());
+            }
+            return result;
         }
 
         public ServiceResult Update(SupplierUpdateDto model)
         {
-            throw new NotImplementedException();
+            ServiceResult result = new ServiceResult();
+
+            if (!model.IsValidSupplier().Success)
+                return result;
+
+            try
+            {
+                Suppliers suppliers = model.SupplierUpdateEntitieModel();
+
+                suppliers.modify_date = DateTime.Now;
+                suppliers.creation_user = 1;
+
+
+                this.supplierRepository.Update(suppliers);
+
+                result.Message = "suplidor actualizado correctamente.";
+            }
+            catch (Exception ex)
+            {
+
+                result.Success = false;
+                result.Message = "Error actualizando el suplidor";
+                this.logger.LogError($" {result.Message} ", ex.ToString());
+            }
+
+            return result;
         }
     }
 }
