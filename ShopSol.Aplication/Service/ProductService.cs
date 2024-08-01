@@ -8,6 +8,8 @@ using ShopSol.Aplication.Extension;
 using ShopSol.Aplication.Interfaces;
 using ShopSol.Domain.Interfaces;
 using ShopSol.Persistence.Context;
+using ShopSol.Persistence.Exceptions;
+using ShopSol.Persistence.Extension;
 
 namespace ShopSol.Aplication.Service
 {
@@ -22,104 +24,141 @@ namespace ShopSol.Aplication.Service
             this.productRepository = productRepository;
             this.logger = logger;
         }
-        public ServiceResult Get()
+
+        public ServiceResult GetProduct(int productid)
         {
-            ServiceResult result = new ServiceResult();
+            var result = new ServiceResult();
 
             try
             {
-                var product = this.productRepository.GetAll();
-                result.Data = product;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = "Error obteniendo los productos";
-                this.logger.LogError($"{result.Message}", ex.ToString());
-
-            }
-            return result;
-        }
-
-        public ServiceResult GetById(int id)
-        {
-            ServiceResult result = new ServiceResult();
-
-            try
-            {
-                var product = this.productRepository.GetEntityBy(id);
-                result.Data = product;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = "Error obteniendo los productos";
-                this.logger.LogError($"{result.Message}", ex.ToString());
-
-            }
-            return result;
-        }
-
-        public ServiceResult Remove(ProductRemoveDto model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ServiceResult Save(ProductSaveDto model)
-        {
-            ServiceResult result = new ServiceResult();
-
-            try
-            {
-
-                if (!model.IsValidProduct().Success)
+                if (productid <= 0)
+                {
+                    result.Success = false;
+                    result.Message = "ID del cliente inválido";
                     return result;
+                }
 
-                Products products = model.ConvertProductSaveModel();
+                var products = productRepository.GetEntityBy(productid);
 
-                this.productRepository.save(products);
+                if (products == null)
+                {
+                    result.Success = false;
+                    result.Message = "producto no encontrado";
+                    return result;
+                }
 
-                result.Message = "Producto guardado correctamente.";
-
+                result.Data = products;
+                result.Success = true;
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = "Error guardando el producto";
-                this.logger.LogError($"{result.Message}", ex.ToString());
+                result.Message = "Error obteniendo el producto. ";
+                logger.LogError(result.Message, ex.ToString());
             }
             return result;
 
-
         }
 
-        public ServiceResult Update(ProductUpdateDto model)
+        public ServiceResult GetProducts()
         {
             ServiceResult result = new ServiceResult();
 
-            if (!model.IsValidProduct().Success)
-                return result;
+            try
+            {   
+                result.Data = productRepository.GetAll();
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ocurrió un error obteniendo los productos";
+                logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public ServiceResult RemoveProducts(ProductRemoveDto productsRemove)
+        {
+            ServiceResult result = new ServiceResult();
 
             try
             {
-                Products products = model.ConvertProductUpdateModel();
-
-                products.modify_date = DateTime.Now;
-                products.creation_user = 1;
-               
-
-                this.productRepository.Update(products);
-
-                result.Message = "product actualizado correctamente.";
+                if (productsRemove == null)
+                {
+                    result.Success = false;
+                    result.Message = "Este campo es requerido. ";
+                    return result;
+                }
+                var productos = productsRemove.Toentity();
+                this.productRepository.Remove(productos);
             }
             catch (Exception ex)
             {
 
                 result.Success = false;
-                result.Message = "Error actualizando el producto";
-                this.logger.LogError($" {result.Message} ", ex.ToString());
+                result.Message = "Ocurrió un error eliminando los datos.";
+                logger.LogError(result.Message, ex.ToString());
+            }
+            return result;
+        }
+
+        public ServiceResult SaveProducts(ProductSaveDto productSave)
+        {
+            var result = new ServiceResult();
+
+            try
+            {
+                result = EntityValidator<ProductSaveDto>.Validate(productSave);
+                if (!result.Success)
+                {
+                    return result;
+                }
+
+                var producto = productSave.ToEntity();
+                productRepository.save(producto);
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ocurrió un error guardando los datos";
+                logger.LogError(result.Message, ex.ToString());
             }
 
+            return result;
+        }
+
+        public ServiceResult UpdateProducts(ProductUpdateDto productUpdate)
+        {
+            var result = EntityValidator<ProductUpdateDto>.Validate(productUpdate);
+            if (!result.Success)
+            {
+                return result;
+            }
+
+            try
+            {
+                Products producto = productRepository.GetEntityBy(productUpdate.productid);
+
+                if (producto == null)
+                {
+                    result.Success = false;
+                    result.Message = "No se encontró el producto especificado.";
+                    return result;
+                }
+
+                producto.ConvertProductUpdateModel(productUpdate);
+
+                productRepository.Update(producto);
+                result.Success = true;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ocurrió un error actualizando los datos.";
+                logger.LogError(result.Message, ex.ToString());
+            }
             return result;
         }
     }

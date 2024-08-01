@@ -1,4 +1,4 @@
-﻿
+﻿    
 
 using Microsoft.EntityFrameworkCore;
 using ShopMonolitica.Web.Data.Entities;
@@ -26,13 +26,26 @@ namespace ShopSol.Persistence.Repositories
         }
 
         public List<Products> GetAll()
+        {                                                       
+            return this.context.Products.ToList();
+        }
+
+        public List<Products> GetProductsById(int productId)
         {
-            return context.Products.Select(products =>products.ConvertProductEntitieModel()).ToList();
+            var productos = context.ValidateProductExist(productId);
+
+            if (productos is null)
+            {
+                throw new ProductsExceptions($"No se pudo encontrar el empleado con el id{productId}");
+            }
+            var ProductsList = new List<Products> {productos};
+
+            return ProductsList;
         }
 
         public Products GetEntityBy(int id)
         {
-            var products = context.Products.Find(id).ConvertProductEntitieModel();
+            var products = context.ValidateProductExist(id);
 
             if (products != null)
             {
@@ -42,40 +55,68 @@ namespace ShopSol.Persistence.Repositories
             return products;
         }
 
-        //public List<Products> GetProducts()
-        //{
-        //    return context.Products.Select(products => products.ConvertProductEntitieModel()).ToList();
-        //}
 
         public void Remove(Products entity)
         {
-            Products productToDelete = this.context.Products.Find(entity.productid);
-
-            productToDelete.deleted = entity.deleted;
-            productToDelete.delete_date = entity.delete_date;
-            productToDelete.delete_user = entity.delete_user;
-
-            this.context.Products.Update(productToDelete);
+            var existingProducts = context.ValidateProductExist(entity.Id);
+            if (existingProducts != null)
+            {
+                context.Products.Remove(existingProducts);
+                context.SaveChanges();
+            }
+            else
+            {
+                throw new ArgumentException("El producto no existe.");
+            }
         }
 
         public void save(Products entity)
         {
-            Products saveEntity = entity.ConvertProductSaveModel();
-
-            context.Products.Add(saveEntity);
-            context.SaveChanges();
-        }
-
-        public void Update(Products entity)
-        {
-            Products productsToUpdate = context.Products.Find(entity.productid);
-
-            if (productsToUpdate != null)
+            try
             {
-                productsToUpdate.ConvertProductUpdateModel();
-                context.Products.Update(productsToUpdate);
+                if (entity == null)
+                {
+                    throw new ProductsExceptions(nameof(entity));
+                }
+
+                context.Products.Add(entity);
                 context.SaveChanges();
             }
+            catch (Exception)
+            {
+
+                throw new ProductsExceptions("Error al guardar el producto.");
+            }
         }
+         
+        public void Update(Products entity)
+        {
+            
+
+            try
+            {
+                Products productsToUpdate = GetEntityBy(entity.Id);
+                if (productsToUpdate != null)
+                {
+                    productsToUpdate.ConvertProductUpdateModel(entity);
+                    context.Products.Update(productsToUpdate);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(entity), "La entidad no puede ser nula.");
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new ProductsExceptions("Error al actualizar el empleado.");
+            }
+
+            
+
+        }
+
+       
     }
 }

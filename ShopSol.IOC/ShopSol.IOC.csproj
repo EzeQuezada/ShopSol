@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ShopSol.Aplication\ShopSol.Aplication.csproj" />
+    <ProjectReference Include="..\ShopSol.Infraestructura\ShopSol.Infraestructura.csproj" />
     <ProjectReference Include="..\ShopSol.Persistence\ShopSol.Persistence.csproj" />
   </ItemGroup>
 

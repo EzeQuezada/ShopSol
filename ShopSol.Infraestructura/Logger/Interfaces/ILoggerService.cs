@@ -1,7 +1,8 @@
 ﻿namespace ShopSol.Infraestructura.Logger.Interfaces
 {
-    public class ILoggerService
+    public interface ILoggerService
     {
-
+        void LogInformation(string message);
+        void LogError(Exception ex, string message);
     }
 }

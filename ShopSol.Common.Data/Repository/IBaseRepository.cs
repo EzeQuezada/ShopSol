@@ -13,7 +13,7 @@ namespace ShopSol.Common.Data.Repository
         void save (TEntity entity);
         void Update (TEntity entity);
         void Remove(TEntity entity);
-        List<TEntity> GetAll ();
+        List<TEntity> GetAll();
         TEntity GetEntityBy (TType id);
         bool Exists(Expression<Func<TEntity, bool>> filter);    
     }

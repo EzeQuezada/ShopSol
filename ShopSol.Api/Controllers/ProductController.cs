@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShopSol.Aplication.Dto.Product;
 using ShopSol.Aplication.Interfaces;
-using ShopSol.Persistence.Context;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ShopSol.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/products")]
     [ApiController]
     public class ProductController : ControllerBase
     {
@@ -18,23 +18,27 @@ namespace ShopSol.Api.Controllers
             this.productService = productService;
         }
         // GET: api/<ProductController>
-        [HttpGet]
-        public IActionResult Get()
+        [HttpGet ("GetProduct")]
+        public IActionResult GetProducts()
         {
-            var result = this.productService.Get();
+            var result = this.productService.GetProducts();
+
 
             if (!result.Success)
+            {
                 return BadRequest(result);
-
-
-            return Ok(result);
+            }
+            else
+            {
+                return Ok(result);
+            }
         }
 
         // GET api/<ProductController>/5
         [HttpGet("GetProductById")]
         public IActionResult Get(int id)
         {
-            var result = this.productService.GetById(id);
+            var result = this.productService.GetProduct(id);
 
             if (!result.Success)
                 return BadRequest(result);
@@ -46,7 +50,7 @@ namespace ShopSol.Api.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] ProductSaveDto productSaveDto)
         {
-            var result = this.productService.Save(productSaveDto);
+            var result = this.productService.SaveProducts(productSaveDto);
 
             if (!result.Success)
                 return BadRequest(result);

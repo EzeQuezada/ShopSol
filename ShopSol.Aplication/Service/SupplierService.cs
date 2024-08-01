@@ -3,6 +3,7 @@
 using Microsoft.Extensions.Logging;
 using ShopMonolitica.Web.Data.Entities;
 using ShopSol.Aplication.Core;
+using ShopSol.Aplication.Dto.Product;
 using ShopSol.Aplication.Dto.Supplier;
 using ShopSol.Aplication.Extension;
 using ShopSol.Aplication.Interfaces;
@@ -23,20 +24,52 @@ namespace ShopSol.Aplication.Service
             this.supplierRepository = supplierRepository;
             this.logger = logger;
         }
-        public ServiceResult Get()
+        public ServiceResult GetSuppliers()
         {
             ServiceResult result = new ServiceResult();
 
             try
             {
-                result.Data = this.supplierRepository.GetAll();
+                var suppliers = this.supplierRepository.GetAll();
+                result.Data = (from supplier in supplierRepository.GetAll()
+                               where supplier.deleted == false
+                               select new SupplierBaseDto()
+                               {
+                                   supplierid = supplier.Id,
+                                   CompanyName = supplier.CompanyName,
+                                   ContactName = supplier.ContactName,
+                                   creation_date = supplier.creation_date,
+                                   creation_user = supplier.creation_user,
+                               }).OrderByDescending(cd=>cd.creation_date).ToList();   
             }
-            catch (SuppliersExceptions dex)
-            {
-                result.Success = false;
-                result.Message = dex.Message;
-                this.logger.LogError($"{result.Message}");
 
+            catch (Exception ex)
+            {
+
+                result.Success = false;
+                result.Message = "Error obteniendo los suplidores";
+                this.logger.LogError($"{result.Message}", ex.ToString());
+            }
+            return result;
+        }
+
+        public ServiceResult GetSupplier(int id)
+        {
+            ServiceResult result = new ServiceResult();
+
+            try
+            {
+                result.Data = (from supplier in supplierRepository.GetAll()
+                               where supplier.Id == id
+                               && supplier.deleted == false
+                               select new SupplierBaseDto()
+                               {
+                                   supplierid = supplier.Id,
+                                   CompanyName = supplier.CompanyName,
+                                   ContactName = supplier.ContactName,
+                                   creation_date = supplier.creation_date,
+                                   creation_user = supplier.creation_user,
+                               }).FirstOrDefault();
             }
             catch (Exception ex)
             {
@@ -48,43 +81,18 @@ namespace ShopSol.Aplication.Service
             return result;
         }
 
-        public ServiceResult GetById(int id)
-        {
-            ServiceResult result = new ServiceResult();
-
-            try
-            {
-                result.Data = this.supplierRepository.GetEntityBy(id);
-            }
-            catch (SuppliersExceptions dex)
-            {
-                result.Success = false;
-                result.Message = dex.Message;
-                this.logger.LogError($"{result.Message}");
-
-            }
-            catch (Exception ex)
-            {
-
-                result.Success = false;
-                result.Message = "Error obteniendo los suplidores";
-                this.logger.LogError($"{result.Message}", ex.ToString());
-            }
-            return result;
-        }
-
-        public ServiceResult Remove(SupplierRemoveDto model)
+        public ServiceResult RemoveSuppliers(SupplierRemoveDto productsRemove)
         {
             ServiceResult result = new ServiceResult();
 
             try
             {
                 this.supplierRepository.Remove(new Suppliers()
-                {
-                    supplierid = model.supplierid,
-                    deleted = model.deleted,
-                    delete_date = model.modify_date,
-                    delete_user = model.ModifyUser
+                {   
+                    Id = productsRemove.supplierid,
+                    deleted = productsRemove.deleted,
+                    delete_date = productsRemove.modify_date,
+                    delete_user = productsRemove.modifyUser
                 });
 
                 result.Message = "Suplidor eliminado correctamente.";
@@ -101,7 +109,7 @@ namespace ShopSol.Aplication.Service
             return result;
         }
 
-        public ServiceResult Save(SupplierSaveDto model)
+        public ServiceResult SaveSuppliers(SupplierSaveDto model)
         {
             ServiceResult result = new ServiceResult();
 
@@ -127,7 +135,7 @@ namespace ShopSol.Aplication.Service
             return result;
         }
 
-        public ServiceResult Update(SupplierUpdateDto model)
+        public ServiceResult UpdateSuppliers(SupplierUpdateDto model)
         {
             ServiceResult result = new ServiceResult();
 
@@ -156,5 +164,35 @@ namespace ShopSol.Aplication.Service
 
             return result;
         }
+
+        
+
+        //public ServiceResult SaveSuppliers(SupplierSaveDto supplierSave)
+        //{
+        //      ServiceResult result = new ServiceResult();
+
+        //    try
+        //    {
+        //        result = EntityValidator<ProductSaveDto>.Validate(supplierSave);
+        //        if (!result.Success)
+        //        {
+        //            return result;
+        //        }
+
+        //        Suppliers suppliers = model.ConvertSupplierSaveEntitieModel();
+
+        //        this.supplierRepository.save(suppliers);
+
+        //        result.Message = "Suplidor guardado correctamente.";
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        result.Success = false;
+        //        result.Message = "Error guardando el suplidor";
+        //        this.logger.LogError($"{result.Message}", ex.ToString());
+        //    }
+        //    return result;
+        //}
     }
 }

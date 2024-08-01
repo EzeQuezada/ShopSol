@@ -27,9 +27,24 @@ namespace ShopSol.Persistence.Repositories
 
         public List<Suppliers> GetAll()
         {
-            return context.Suppliers.Select(supplier => supplier.ConvertSupplierEntitieModel()).ToList();
+            return this.context.Suppliers
+                     
+                     .ToList();
+
         }
 
+        public List<Suppliers> GetSupplierById(int supplierId)
+        {
+            var suppliers = context.ValidateSupplierExist(supplierId);
+
+            if (suppliers is null)
+            {
+                throw new SuppliersExceptions($"No se pudo encontrar el empleado con el id{supplierId}");
+            }
+            var SupplierList = new List<Suppliers> {suppliers};
+
+            return SupplierList;
+        }
         public Suppliers GetEntityBy(int id)
         {
             var Suppliers = context.Suppliers.Find(id).ConvertSupplierEntitieModel();
@@ -44,7 +59,7 @@ namespace ShopSol.Persistence.Repositories
 
         public void Remove(Suppliers entity)
         {
-            Suppliers supplierToDelete = this.context.Suppliers.Find(entity.supplierid);
+            Suppliers supplierToDelete = this.context.Suppliers.Find(entity.Id);
 
             supplierToDelete.deleted = entity.deleted;
             supplierToDelete.delete_date = entity.delete_date;
@@ -64,7 +79,7 @@ namespace ShopSol.Persistence.Repositories
 
         public void Update(Suppliers entity)
         {
-            var updatedSuppliers = context.Suppliers.FirstOrDefault(c => c.supplierid == entity.supplierid);
+            var updatedSuppliers = context.Suppliers.FirstOrDefault(c => c.Id == entity.Id);
 
             if (updatedSuppliers != null)
             {
@@ -73,5 +88,7 @@ namespace ShopSol.Persistence.Repositories
                 context.SaveChanges();
             }
         }
+
+       
     }
 }

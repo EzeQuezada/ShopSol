@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ShopSol.Aplication.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -7,19 +8,39 @@ namespace ShopSol.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class SupplierController : ControllerBase
+
     {
+        private readonly ISupplierService supplierService;
+
+        public SupplierController(ISupplierService supplierService)
+        {
+            this.supplierService = supplierService;
+        }
         // GET: api/<SupplierController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            var result = this.supplierService.GetSuppliers();
+
+            if (!result.Success)
+                return BadRequest(result);
+            else
+                return Ok(result);
         }
 
         // GET api/<SupplierController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+            var result = this.supplierService.GetSupplier(id);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            else
+            {
+                return Ok(result);
+            }
         }
 
         // POST api/<SupplierController>

@@ -1,6 +1,7 @@
 ﻿
 
 using ShopMonolitica.Web.Data.Entities;
+using ShopSol.Persistence.Context;
 using ShopSol.Persistence.Models;
 
 namespace ShopSol.Persistence.Extension
@@ -11,7 +12,8 @@ namespace ShopSol.Persistence.Extension
         {
             return new Suppliers()
             {
-                supplierid = suppliers.supplierid,
+             
+                
                 CompanyName = suppliers.CompanyName,
                 ContactName = suppliers.ContactName,
                 ContactTitle = suppliers.ContactTitle,
@@ -29,7 +31,7 @@ namespace ShopSol.Persistence.Extension
         {
             return new Suppliers()
             {
-                supplierid = supplierSaveModel.supplierid,
+                
                 CompanyName = supplierSaveModel.CompanyName,
                 ContactName = supplierSaveModel.ContactName,
                 creation_date = supplierSaveModel.creation_date,
@@ -51,7 +53,7 @@ namespace ShopSol.Persistence.Extension
         {
 
 
-            suppliers.supplierid = supplierUpdateModel.supplierid;
+            
             suppliers.CompanyName = supplierUpdateModel.CompanyName;
             suppliers.ContactName = supplierUpdateModel.ContactName;
             suppliers.ContactTitle = supplierUpdateModel.ContactTitle;
@@ -65,6 +67,11 @@ namespace ShopSol.Persistence.Extension
             suppliers.modify_date = supplierUpdateModel.modify_date;
 
 
+        }
+        public static Suppliers ValidateSupplierExist(this ShopContext context, int supplierId)
+        {
+            var suppliers = context.Suppliers.Find(supplierId);
+            return suppliers;
         }
     }
 }

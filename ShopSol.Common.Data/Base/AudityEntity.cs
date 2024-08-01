@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace ShopSol.Common.Data.Base
 {
-    public class AudityEntity <TTyPE> : BaseEntity<TTyPE>
+    public abstract class AudityEntity <TTyPE> : BaseEntity<TTyPE>
     {
 
-        public override TTyPE Id { get ; set; }
-        public string? CompanyName { get; set; }
-        public string? ContactName { get; set; }
-        public string? ContactTitle { get; set; }
-        public string? Address { get; set; }
-        public string? City { get; set; }
-        public string? Region { get; set; }
-        public string? PostalCode { get; set; }
-        public string? Country { get; set; }
-        public string? Phone { get; set; }
-        public string? Fax { get; set; }
+        public DateTime creation_date { get; set; }
+        public int creation_user { get; set; }
+        public DateTime? modify_date { get; set; }
+        public int? modify_user { get; set; }
+        public int? delete_user { get; set; }
+        public DateTime? delete_date { get; set; }
+        public bool deleted { get; set; }
     }
 }

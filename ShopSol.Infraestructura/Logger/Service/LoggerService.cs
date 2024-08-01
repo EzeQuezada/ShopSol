@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+
+using ShopSol.Infraestructura.Logger.Interfaces;
 
 namespace ShopSol.Infraestructura.Logger.Service
 {
-    internal class LoggerService
+    public class LoggerService : ILoggerService
     {
+        public void LogError(Exception ex, string message)
+        {
+            this.LogError(ex, message);
+        }
+
+        public void LogInformation(string message)
+        {
+            this.LogInformation(message);
+        }
     }
 }

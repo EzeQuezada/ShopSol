@@ -3,13 +3,16 @@
 using ShopMonolitica.Web.Data.Entities;
 using ShopSol.Aplication.Core;
 using ShopSol.Aplication.Dto.Product;
-using ShopSol.Aplication.Dto.Supplier;
-using ShopSol.Persistence.Models;
+
 
 namespace ShopSol.Aplication.Interfaces
 {
-    public interface IProductService : IBaseService<ProductSaveDto, ProductUpdateDto,
-                                ProductRemoveDto >
+    public interface IProductService 
     {
+        ServiceResult GetProducts();
+        ServiceResult GetProduct(int productid);
+        ServiceResult UpdateProducts(ProductUpdateDto productUpdate);
+        ServiceResult RemoveProducts(ProductRemoveDto productsRemove);
+        ServiceResult SaveProducts(ProductSaveDto productSave);
     }
 }

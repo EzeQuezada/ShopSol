@@ -1,4 +1,4 @@
-﻿
+﻿    
 
 using ShopMonolitica.Web.Data.Entities;
 using ShopSol.Aplication.Core;
@@ -37,7 +37,7 @@ namespace ShopSol.Aplication.Extension
         {
             return new Suppliers()
             {
-                supplierid = supplierSaveModel.supplierid,
+                
                 CompanyName = supplierSaveModel.CompanyName,
                 ContactName = supplierSaveModel.ContactName,
                 creation_date = supplierSaveModel.creation_date,
