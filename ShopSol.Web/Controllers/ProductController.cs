@@ -1,20 +1,43 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShopMonolitica.Web.Data.ProductModel;
+using ShopSol.Web.Models;
+using ShopSol.Web.Service.IService;
 
 namespace ShopSol.Web.Controllers
 {
     public class ProductController : Controller
     {
-        // GET: ProductController
-        public ActionResult Index()
+        private readonly IProductService productService;
+
+        public ProductController(IProductService productService)
         {
-            return View();
+            this.productService = productService;
+        }
+        // GET: ProductController
+        public async Task< ActionResult> Index()
+        {
+            var ProductGetList = await productService.GetList();
+
+            if (!ProductGetList.success)
+            {
+                ViewBag.Message = ProductGetList.message;
+                return View();
+            }
+            return View(ProductGetList.data); ;
         }
 
         // GET: ProductController/Details/5
-        public ActionResult Details(int id)
+        public async Task< ActionResult> Details(int id)
         {
-            return View();
+            var ProductGetList = await productService.GetById(id);
+
+            if (!ProductGetList.success)
+            {
+                ViewBag.Message = ProductGetList.message;
+                return View();
+            }
+            return View(ProductGetList.data);
         }
 
         // GET: ProductController/Create
@@ -26,10 +49,18 @@ namespace ShopSol.Web.Controllers
         // POST: ProductController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task <ActionResult>  Create(ProductSaveModel productSaveModel)
         {
             try
             {
+                var saveResult = await productService.Save(productSaveModel);
+
+                if (!saveResult.success)
+                {
+                    ViewBag.Message = saveResult.message;
+                    return View();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -39,45 +70,42 @@ namespace ShopSol.Web.Controllers
         }
 
         // GET: ProductController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task <ActionResult> Edit(int id)
         {
-            return View();
+            var ProductGetList = await productService.GetById(id);
+
+            if (!ProductGetList.success)
+            {
+                ViewBag.Message = ProductGetList.message;
+                return View();
+            }
+            return View(ProductGetList.data);
         }
 
         // POST: ProductController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task <ActionResult> Edit(ProductUpdateModel productUpdateModel)
         {
             try
             {
+
+                var updateResult = await productService.Update(productUpdateModel);
+
+                if (!updateResult.success)
+                {
+                    ViewBag.Message = updateResult.message;
+                    return View(productUpdateModel);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ViewBag.Message = $"Error inesperado: {ex.Message}";
+                return View(productUpdateModel);
             }
         }
 
-        // GET: ProductController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ProductController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }
